@@ -1,0 +1,49 @@
+services:
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    ports:
+      - "9090:9090" 
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro  
+    networks:
+      - mynetwork
+      
+  ssh-tunnel:
+    image: alpine
+    container_name: ssh-tunnel
+    ports:
+      - "9113:9113"
+      - "9100:9100"
+    command: >
+      /bin/sh -c "apk add --no-cache openssh && ssh -o StrictHostKeyChecking=no -N \
+      -L 0.0.0.0:9113:localhost:9113 \
+      -L 0.0.0.0:9100:localhost:9100 \
+      ubuntu@13.53.102.210 -i /root/.ssh/id_rsa"
+    volumes:
+      - ~/.ssh/gg.pem:/root/.ssh/id_rsa:ro
+    networks:
+      - mynetwork
+    depends_on:
+      - prometheus
+
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    ports:
+      - "3000:3000"  
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin  
+    depends_on:
+      - prometheus
+    networks:
+      - mynetwork
+    volumes:
+      - grafana_data:/var/lib/grafana  
+
+networks:
+  mynetwork:
+    driver: bridge
+
+volumes:
+  grafana_data:
