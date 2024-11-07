@@ -151,9 +151,9 @@ Press `save & test` then in the feedback popup click on `build dashboard` option
 You can add a dashboard and customize it or you can import a custom [pre-configured dashboard](https://grafana.com/grafana/dashboards).
 
 Click on `Import a dashboard`, then add and `load` ids:
-`1860` for nginx exporter
-Repeat same
-`11199` for node exporter
+
+ - `1860` for Node Exporter Full
+ - `11199` for NGINX by nginxinc
 
 
 # The results:
